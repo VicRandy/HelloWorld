@@ -1,0 +1,128 @@
+/**
+NOMBRE Y APELLIDOS:
+LABORATORIO:
+PUESTO:
+USUARIO DE DOMJUDGE USADO EN EL EXAMEN:
+*/
+
+
+#include "Arbin.h"
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+/**
+ COMPLEJIDAD: Determina y justifica aquí la complejidad de la operación
+
+ El algoritmo visita todos los nodos hoja y solo incrementa cuando es de nivel superior o igual a k
+ como los recorre recursivamente, el arbol al ser binario tiene dos caminos, los recorre recusivamente los dos
+ por tanto el coste de este algoritmo es LOGARITMICO O(log n);
+
+ */
+
+
+
+void numeroHojasAux(Arbin<int> a, unsigned int k, int nivel, unsigned int& numeroHojas){
+
+	if (!a.esVacio()){
+		
+		if (a.hijoIz().esVacio() && a.hijoDer().esVacio() && (nivel >= k))
+		{
+			numeroHojas++;
+		}
+		else{
+
+			numeroHojasAux(a.hijoIz(), k, nivel + 1, numeroHojas);
+			numeroHojasAux(a.hijoDer(), k, nivel + 1, numeroHojas);
+		}
+	
+	}
+	
+}
+
+
+unsigned int numero_hojas_mas_profundas_que(Arbin<int> a, unsigned int k) {
+	
+	unsigned int numeroHojas = 0;
+	int nivel = 0;
+
+	numeroHojasAux(a, k, nivel, numeroHojas);
+
+	return numeroHojas;
+}
+
+Arbin<int> lee_arbol(istream& in) {
+	char c;
+	in >> c;
+	switch (c) {
+	case '#': return Arbin<int>();
+	case '[': {
+		int raiz;
+		in >> raiz;
+  		in >> c;
+		return Arbin<int>(raiz);
+	}
+	case '(': {
+		Arbin<int> iz = lee_arbol(in);
+		int raiz;
+		in >> raiz;
+		Arbin<int> dr = lee_arbol(in);
+		in >> c;
+		return Arbin<int>(iz, raiz, dr);
+	}
+	default: return Arbin<int>();
+	}
+}
+
+
+
+/**
+La entrada al programa consiste de líneas formadas por:
+(1) Un árbol de enteros
+(2) El valor de k
+Los árboles se codifican de acuerdo con las siguientes reglas:
+(1) El árbol vacío se codifica como #
+(2) Los árboles simples se codifican como [v], con  
+    v el valor del nodo
+(3) Los árboles complejos se codifican como (IvD),
+    con I la codificación del hijo izquierdo,
+	v el valor de la raíz, y D la codificación
+	del hijo derecho.
+Para cada línea leida, escribe en la salida estádar
+el número de hojas que están a profundidad mayor que k
+
+	
+Ejemplo de entrada:
+
+([2]1([4]3[5])) 0
+([2]1([4]3[5])) 1
+([2]1([4]3[5])) 2
+([2]1([4]3[5])) 3
+([2]1([4]3[5])) 4
+([2]1([4]3[5])) 100
+
+Salida asociada:
+
+3
+3
+2
+0
+0
+0
+
+*/
+
+
+int main() {
+	Arbin<int> arbol;
+	while (cin.peek() != EOF)  {
+		Arbin<int> a = lee_arbol(cin);
+		int k;
+		cin >> k;
+		cout << numero_hojas_mas_profundas_que(a,k) << endl;
+		string resto_linea;
+		getline(cin, resto_linea);
+	}
+	return 0;
+}
